@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import detectEthereumProvider from '@metamask/detect-provider';
-import DecentralizedIdentity from '../../artifacts/contracts/DecentralizedIdentity.sol/DecentralizedIdentity.json';
+import DecentralizedIdentity from '../artifacts/contracts/DecentralizedIdentity.sol/DecentralizedIdentity.json';
 
 const MetaMaskContext = createContext({
   isConnected: false,
@@ -27,19 +27,20 @@ export const MetaMaskProvider = ({ children }) => {
   const [identity, setIdentity] = useState(null);
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
+  const [logEnabled , setLogEnabled] = useState(true);
 
   // Contract address - replace with your deployed contract address
-  const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Hardhat default
+  const contractAddress = "0xfabfd950a9a566a8844a7d948a4c91002941e85d"; // Hardhat default
 
   useEffect(() => {
     const initialize = async () => {
       const provider = await detectEthereumProvider();
-      
+      logEnabled && console.log('provider ',provider);
       if (provider) {
         setProvider(provider);
         
         const accounts = await provider.request({ method: 'eth_accounts' });
-        
+        logEnabled && console.log('accounts ',accounts);
         if (accounts.length > 0) {
           await handleConnection(accounts[0], provider);
         }
@@ -53,6 +54,7 @@ export const MetaMaskProvider = ({ children }) => {
     
     return () => {
       if (provider) {
+        logEnabled && console.log('remove listener');
         provider.removeListener('accountsChanged', handleAccountsChanged);
         provider.removeListener('chainChanged', () => window.location.reload());
       }
@@ -61,6 +63,7 @@ export const MetaMaskProvider = ({ children }) => {
 
   const handleAccountsChanged = (accounts) => {
     if (accounts.length === 0) {
+        logEnabled && console.log('disconnect');
       disconnectWallet();
     } else {
       handleConnection(accounts[0], provider);
@@ -70,13 +73,14 @@ export const MetaMaskProvider = ({ children }) => {
   const handleConnection = async (account, provider) => {
     setAccount(account);
     setIsConnected(true);
-    
+    logEnabled && console.log('handleconnection',account);
     const web3Provider = new ethers.BrowserProvider(provider);
     const balance = await web3Provider.getBalance(account);
     setBalance(ethers.formatEther(balance));
     
     // Initialize contract
     const signer = await web3Provider.getSigner();
+    logEnabled && console.log('signer ',signer);
     const identityContract = new ethers.Contract(
       contractAddress,
       DecentralizedIdentity.abi,
