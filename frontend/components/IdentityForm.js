@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMetaMask } from '@/context/MetaMaskContext';
 
 const IdentityForm = () => {
@@ -13,6 +13,16 @@ const IdentityForm = () => {
     });
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
+    
+    useEffect(()=>{
+            console.log('identity ',identity);
+            if(identity){
+
+                    setFormData(prev => ({ ...prev, ...identity }));
+            }
+            
+            
+    },[identity||[]]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,15 +39,15 @@ const IdentityForm = () => {
         try {
             let success;
             if (identity) {
-                console.log(identity);
+                console.log('identity ',identity);
 
                 success = await updateIdentity(
                     formData.name,
                     formData.email,
-                    parseInt(formData.age),
+                    parseInt(formData.age||20),
                     formData.country
                 );
-                console.log('update iden ', success);
+                console.log('update identity ', success);
                 setMessage({ text: 'Identity updated successfully!', type: 'success' });
             } else {
                 success = await createIdentity(
@@ -124,7 +134,7 @@ const IdentityForm = () => {
                     <input
                         type="number"
                         name="age"
-                        value={formData.age || 20}
+                        value={formData.age }
                         onChange={handleChange}
                         min="1"
                         required

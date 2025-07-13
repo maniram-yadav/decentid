@@ -38,7 +38,6 @@ export const MetaMaskProvider = ({ children }) => {
       logEnabled && console.log('provider ',provider);
       if (provider) {
         setProvider(provider);
-        // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const accounts = await provider.request({ method: 'eth_requestAccounts' });
         logEnabled && console.log('accounts ',accounts);
         if (accounts.length > 0) {
@@ -50,7 +49,7 @@ export const MetaMaskProvider = ({ children }) => {
       }
     };
     
-    console.log('contractAddress',contractAddress);
+    logEnabled && console.log('contractAddress',contractAddress);
     initialize();
     
     return () => {
@@ -78,7 +77,7 @@ export const MetaMaskProvider = ({ children }) => {
     const web3Provider = new ethers.BrowserProvider(provider);
     const balance = await web3Provider.getBalance(account);
     setBalance(ethers.formatEther(balance));
-    console.log('web3Provider ',provider)
+    logEnabled && console.log('web3Provider ',provider)
     // Initialize contract
     const signer = await web3Provider.getSigner();
     logEnabled && console.log('signer ',signer);
@@ -88,7 +87,7 @@ export const MetaMaskProvider = ({ children }) => {
       signer
     );
     setContract(identityContract);
-    console.log('contract ',identityContract);
+   logEnabled && console.log('contract ',identityContract);
     // Check if identity exists
     await refreshIdentity(identityContract, account);
   };
@@ -118,8 +117,10 @@ export const MetaMaskProvider = ({ children }) => {
   const refreshIdentity = async (contractInstance, accountAddress) => {
     try {
       const exists = await contractInstance.registeredAddresses(accountAddress);
+      logEnabled && console.log('Identity exists ',contractAddress,accountAddress,exists);
       if (exists) {
         const identityData = await contractInstance.getIdentity(accountAddress);
+        logEnabled && console.log('IdentityData ',identityData);
         setIdentity({
           name: identityData.name,
           email: identityData.email,
