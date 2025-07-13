@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -10,6 +10,10 @@ contract DecentralizedIdentity is Ownable {
         uint256 age;
         string country;
         bool exists;
+    }
+
+    constructor() Ownable(msg.sender){
+
     }
 
     mapping(address => Identity) public identities;

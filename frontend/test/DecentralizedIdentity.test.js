@@ -12,11 +12,14 @@ describe("DecentralizedIdentity", function () {
     [owner, addr1, addr2] = await ethers.getSigners();
     DecentralizedIdentity = await ethers.getContractFactory("DecentralizedIdentity");
     decentralizedIdentity = await DecentralizedIdentity.deploy();
-    await decentralizedIdentity.deployed();
+    await decentralizedIdentity.waitForDeployment();
   });
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
+      const own = await decentralizedIdentity.owner();
+      const contractAdd = decentralizedIdentity.address
+      console.log(own);
       expect(await decentralizedIdentity.owner()).to.equal(owner.address);
     });
   });
@@ -137,4 +140,5 @@ describe("DecentralizedIdentity", function () {
       ).to.be.revertedWith("Identity does not exist");
     });
   });
+
 });
