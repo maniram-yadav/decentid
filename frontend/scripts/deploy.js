@@ -1,14 +1,11 @@
 const hre = require("hardhat");
 
 async function main() {
-  const DecentralizedIdentity = await hre.ethers.getContractFactory("DecentralizedIdentity");
+  const DecentralizedIdentity = await ethers.getContractFactory("DecentralizedIdentity");
   const decentralizedIdentity = await DecentralizedIdentity.deploy();
 
-  await decentralizedIdentity.deployed();
-
-  console.log(
-    `DecentralizedIdentity deployed to ${decentralizedIdentity.address}`
-  );
+  const de = await decentralizedIdentity.waitForDeployment();
+  console.log(  `DecentralizedIdentity deployed to ${decentralizedIdentity.address}`);
 }
 
 main().catch((error) => {
