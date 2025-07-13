@@ -30,7 +30,7 @@ export const MetaMaskProvider = ({ children }) => {
   const [logEnabled , setLogEnabled] = useState(true);
 
   // Contract address - replace with your deployed contract address
-  const contractAddress = "0xfabfd950a9a566a8844a7d948a4c91002941e85d"; // Hardhat default
+  const contractAddress = "0x332f50C4050b3E1418AD0B9664664Ad4D5351af5"; // Hardhat default
 
   useEffect(() => {
     const initialize = async () => {
@@ -38,8 +38,8 @@ export const MetaMaskProvider = ({ children }) => {
       logEnabled && console.log('provider ',provider);
       if (provider) {
         setProvider(provider);
-        
-        const accounts = await provider.request({ method: 'eth_accounts' });
+        // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
         logEnabled && console.log('accounts ',accounts);
         if (accounts.length > 0) {
           await handleConnection(accounts[0], provider);
@@ -50,6 +50,7 @@ export const MetaMaskProvider = ({ children }) => {
       }
     };
     
+    console.log('contractAddress',contractAddress);
     initialize();
     
     return () => {
@@ -77,7 +78,7 @@ export const MetaMaskProvider = ({ children }) => {
     const web3Provider = new ethers.BrowserProvider(provider);
     const balance = await web3Provider.getBalance(account);
     setBalance(ethers.formatEther(balance));
-    
+    console.log('web3Provider ',provider)
     // Initialize contract
     const signer = await web3Provider.getSigner();
     logEnabled && console.log('signer ',signer);
@@ -87,7 +88,7 @@ export const MetaMaskProvider = ({ children }) => {
       signer
     );
     setContract(identityContract);
-    
+    console.log('contract ',identityContract);
     // Check if identity exists
     await refreshIdentity(identityContract, account);
   };
@@ -137,7 +138,7 @@ export const MetaMaskProvider = ({ children }) => {
 
   const createIdentity = async (name, email, age, country) => {
     try {
-      const tx = await contract.createIdentity(name, email, age, country);
+      const tx = await contract.createIdentity(name, email, 12, 'country');
       await tx.wait();
       await refreshIdentity(contract, account);
       return true;

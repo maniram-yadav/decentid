@@ -5,7 +5,7 @@ async function main() {
   const decentralizedIdentity = await DecentralizedIdentity.deploy();
 
   const de = await decentralizedIdentity.waitForDeployment();
-  console.log(  `DecentralizedIdentity deployed to ${decentralizedIdentity.address}`);
+  console.log(`DecentralizedIdentity deployed to ${await decentralizedIdentity.getAddress()}`);
 }
 
 main().catch((error) => {
